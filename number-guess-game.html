@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Number guessing game</title>
+    <style>
+      html {
+        font-family: sans-serif;
+      }
+
+      body {
+        width: 50%;
+        margin: 3em auto;
+      }
+	  .margin-line{
+		margin-bottom:0.5em;
+	  }
+    </style>
+  </head>
+
+  <body>
+    <h1>Game: Guess The Number</h1>
+
+	<div class="margin-line">I am thinking a number from 1 to 10.</div>
+	<div class="margin-line">You must guess what it is in three tries.</div>
+    <div class="margin-line">
+      <label for="guessField">Enter a guess: </label><input type="number" id="guessField" class="guessField">
+      <input type="button" value="Guess it" class="checkGuess">
+    </div>
+
+    <div class="guesses margin-line"></div>
+    <div class="finalResult margin-line" ></div>
+
+    <script>
+      let randomNumber = Math.floor(Math.random() * 10) + 1;
+	  //console.log("randomNumber "+randomNumber);
+      const guesses = document.querySelector('.guesses');
+      const finalResult = document.querySelector('.finalResult');
+      const checkGuess = document.querySelector('.checkGuess');
+      const guessField = document.querySelector('.guessField');
+      let guessCount = 1;
+      let resetButton;
+	  let endOfTextContent;
+
+    function validateGuess() {
+        let userGuess = Number(guessField.value);
+		if(isNaN(userGuess) || userGuess == ''){
+			alert("Please enter the number.");
+			return;
+		}
+		
+        if (guessCount === 1) {
+			endOfTextContent = ' (cold)'; 
+			guesses.textContent = 'Your first guess is: '+ userGuess;
+        }  else if (guessCount === 2) {
+			endOfTextContent = ' (warm)'; 
+			guesses.textContent = 'Your second guess is: '+ userGuess;
+        }  else if (guessCount === 3) {
+			endOfTextContent = ' (hot)';
+			guesses.textContent = 'Your last guess is: '+ userGuess;
+			finalResult.textContent = 'You have lost the game.';
+        } 
+        if (userGuess === randomNumber) {
+			endOfTextContent = '';
+            finalResult.textContent = 'Right! You have won the game.';
+        }
+		if(guessCount === 3 || userGuess === randomNumber) startNewGame();
+		
+		guesses.textContent = guesses.textContent+endOfTextContent;
+        guessCount++;
+        guessField.value = '';
+        guessField.focus();
+    }
+
+      checkGuess.addEventListener('click', validateGuess);
+	
+	//After three attempts disable the fields
+      function startNewGame() {
+        guessField.disabled = true;
+        checkGuess.disabled = true;
+        resetButton = document.createElement('button');
+        resetButton.textContent = 'Start new game';
+        document.body.appendChild(resetButton);
+        resetButton.addEventListener('click', resetGame);
+      }
+    //Reset the all fileds same as refresh page
+      function resetGame() {
+        guessCount = 1;	
+        guesses.textContent = '';
+		finalResult.textContent = ''; 
+        resetButton.parentNode.removeChild(resetButton);
+        guessField.disabled = false;
+        checkGuess.disabled = false;
+        guessField.value = '';
+        guessField.focus();
+        randomNumber = Math.floor(Math.random() * 10) + 1;
+		//console.log("after reset randomNumber "+randomNumber);
+      }
+    </script>
+  </body>
+</html>
